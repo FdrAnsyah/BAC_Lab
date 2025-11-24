@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Vuln Access Control Demo</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .nav { margin-bottom: 15px; }
+    .flash { color: darkred; }
+    .box { border: 1px solid #ddd; padding: 12px; margin-bottom: 12px; border-radius:6px; }
+    .admin { color: darkgreen; }
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <a href="{{ url_for('index') }}">Home</a> |
+    {% if session.get('username') %}
+    <a href="{{ url_for('profile') }}?user_id={{ session.get('user_id', '') }}">My Profile</a> |
+    <a href="{{ url_for('billing') }}?bill_id={{ session.get('user_id', '') }}">My Bill</a> |
+    	{% if session.get('role') == 'admin' %}
+    		<a href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a> |
+                <a href="{{ url_for('user_list') }}">User List</a> |
+    	{% endif %}
+      Logged in as <strong>{{ session.get('username') }}</strong> ({{ session.get('role') }}) |
+      <a href="{{ url_for('logout') }}">Logout</a>
+    {% endif %}
+      <a href="{{ url_for('login') }}">Login</a>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=false) %}
+    {% if messages %}
+      <div class="box flash">
+        {% for m in messages %}
+          <div>{{ m }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+  <hr>
+  <small>Demo app — intentionally vulnerable. For lab only.</small>
+</body>
+</html>
+

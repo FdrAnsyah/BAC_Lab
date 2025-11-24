@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block content %}
+  <h2 class="admin">Admin Dashboard (intended for admin only)</h2>
+  <div class="box">
+    <p>This page lists users (no server-side authorization implemented in demo).</p>
+    <table border="0" cellpadding="6">
+      <tr><th>id</th><th>username</th><th>role</th></tr>
+      {% for u in users %}
+      <tr>
+        <td>{{ u.id }}</td>
+        <td>{{ u.username }}</td>
+        <td>{{ u.role }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    <hr>
+    <h3>Change role (Parameter Tampering demo)</h3>
+    <p>Change your role by submitting the form below (unsafe demo).</p>
+    <form method="post" action="{{ url_for('become_admin') }}">
+      <label>New role: <input name="role" value="admin"></label>
+      <button type="submit">Change role</button>
+    </form>
+  </div>
+{% endblock %}
+

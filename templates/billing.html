@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block content %}
+  <h2>Billing (bill id={{ bill.id }})</h2>
+  <div class="box">
+    <p><strong>Owner:</strong> {{ bill.username }}</p>
+    <p><strong>Amount due:</strong> ${{ bill.balance }}</p>
+  </div>
+{% endblock %}
+

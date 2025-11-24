@@ -1,0 +1,4 @@
+Install libs:
+$ pip install Flask sqlite-minutils
+Jalankan aplikasi:
+$ python app.py

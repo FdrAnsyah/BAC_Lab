@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block content %}
+  <h2>Profile (id={{ profile.id }})</h2>
+  <div class="box">
+    <p><strong>Username:</strong> {{ profile.username }}</p>
+    <p><strong>Email:</strong> {{ profile.email }}</p>
+    <p><strong>Balance:</strong> {{ profile.balance }}</p>
+  </div>
+{% endblock %}
+

@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block content %}
+  <h2>Login</h2>
+  <div class="box">
+    <form method="post">
+      <label>Username: <input name="username"></label><br><br>
+      <label>Password: <input name="password" type="password"></label><br><br>
+      <button type="submit">Login</button>
+    </form>
+    <p>Test accounts: <strong>alice / alicepass</strong>, <strong>bob / bobpass</strong>, <strong>carol / carolpass (admin)</strong></p>
+  </div>
+{% endblock %}
+

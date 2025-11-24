@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block content %}
+  <h2>User List</h2>
+  <div class="box">
+    <table border="0" cellpadding="6">
+      <tr><th>id</th><th>username</th><th>role</th><th>actions</th></tr>
+      {% for u in users %}
+      <tr>
+        <td>{{ u.id }}</td>
+        <td>{{ u.username }}</td>
+        <td>{{ u.role }}</td>
+        <td>
+          <a href="{{ url_for('profile') }}?user_id={{ u.id }}">view profile</a> |
+          <a href="{{ url_for('billing') }}?bill_id={{ u.id }}">view bill</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+{% endblock %}
+
