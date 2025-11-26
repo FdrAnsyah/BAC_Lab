@@ -122,7 +122,7 @@ def profile():
 @app.route('/admin')
 @login_required
 def admin_dashboard():
-    if session['role'] != 'admin': 
+    if session['role'] != 'admin':
        flash("User not authorized", "error")
        return redirect(url_for('index'))
 
@@ -166,5 +166,4 @@ def user_list():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
-
+    app.run(host="0.0.0.0", port=5000, debug=True)
