@@ -105,18 +105,22 @@ def index():
 
 
 @app.route('/profile')
+@login_required
 def profile():
-    user_id = request.args.get('user_id')
-    if not user_id:
-        flash("No user_id provided", "error")
-        return redirect(url_for('index'))
-    cur = get_db().execute('SELECT id, username, email, balance FROM users WHERE id = ?', (user_id,))
+    user_id = session.get('user_id')
+
+    cur = get_db().execute(
+        'SELECT id, username, email, balance FROM users WHERE id = ?',
+        (user_id,)
+    )
     row = cur.fetchone()
+
     if not row:
         flash("User not found", "error")
         return redirect(url_for('index'))
-    # intentionally do not check ownership
+
     return render_template('profile.html', profile=row)
+
 
 
 @app.route('/admin')
@@ -132,37 +136,86 @@ def admin_dashboard():
 
 
 @app.route('/become_admin', methods=['POST'])
+@login_required
 def become_admin():
-    new_role = request.form.get('role', '')
-    session['role'] = new_role  # insecurely trusting client input
-    if 'user_id' in session:
-        db = get_db()
-        db.execute('UPDATE users SET role = ? WHERE id = ?', (new_role, session['user_id']))
-        db.commit()
-    flash(f"Role changed to: {new_role} (UNSAFE - demo only)")
-    return redirect(url_for('index'))
+    if session.get('role') != 'admin':
+        flash("Unauthorized action!", "error")
+        return redirect(url_for('index'))
+
+    new_role = request.form.get('role', '').strip()
+    target_user_id = request.form.get('user_id')
+
+    valid_roles = ['user', 'admin']
+
+    if new_role not in valid_roles:
+        flash("Invalid role", "error")
+        return redirect(url_for('admin_dashboard'))
+
+    try:
+        target_user_id = int(target_user_id) # type: ignore
+    except:
+        flash("Invalid user ID", "error")
+        return redirect(url_for('admin_dashboard'))
+
+    db = get_db()
+    db.execute(
+        'UPDATE users SET role = ? WHERE id = ?',
+        (new_role, target_user_id)
+    )
+    db.commit()
+
+    flash("Role updated securely")
+    return redirect(url_for('admin_dashboard'))
+
 
 
 @app.route('/billing')
+@login_required
 def billing():
     bill_id = request.args.get('bill_id')
+
     if not bill_id:
         flash("No bill_id provided", "error")
         return redirect(url_for('index'))
-    cur = get_db().execute('SELECT id, username, email, balance FROM users WHERE id = ?', (bill_id,))
+
+    try:
+        requested_id = int(bill_id)
+    except ValueError:
+        flash("Invalid bill ID format", "error")
+        return redirect(url_for('index'))
+
+    current_user_id = session.get('user_id')
+
+    # hanya boleh akses tagihan sendiri
+    if requested_id != current_user_id:
+        flash("Unauthorized access to billing data", "error")
+        return redirect(url_for('index'))
+
+    cur = get_db().execute(
+        'SELECT id, username, email, balance FROM users WHERE id = ?',
+        (requested_id,)
+    )
     bill = cur.fetchone()
+
     if not bill:
         flash("Bill not found", "error")
         return redirect(url_for('index'))
+
     return render_template('billing.html', bill=bill)
+
 
 
 @app.route('/users')
 @login_required
 def user_list():
+    if session.get('role') != 'admin':
+        flash("Admin only!", "error")
+        return redirect(url_for('index'))
+
     cur = get_db().execute('SELECT id, username, role FROM users')
     rows = cur.fetchall()
     return render_template('user_list.html', users=rows)
+
 
 
 if __name__ == "__main__":
