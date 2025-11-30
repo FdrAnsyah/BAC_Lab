@@ -1,73 +1,114 @@
-# BAC_Lab
+# BAC Vulnerability Lab
 
-Deskripsi
----------
+## Deskripsi
+Aplikasi Flask sederhana yang **sengaja dibuat rentan** untuk tujuan edukasi keamanan web. Aplikasi ini dirancang untuk mengajarkan dan melatih identifikasi serta eksploitasi kerentanan web umum seperti IDOR (Insecure Direct Object Reference), privilege escalation, forced browsing, dan parameter tampering.
 
-Proyek ini adalah aplikasi contoh berbasis Flask yang menggunakan SQLite sebagai penyimpanan data. Tujuan repositori ini adalah menyediakan aplikasi sederhana untuk latihan keamanan, eksperimen, dan pembelajaran.
-
-Prasyarat
----------
-
+## Opsi 1: Run menggunakan Python/Flask
+### Prasyarat
 - Python 3.8 atau lebih baru
 - `pip` untuk mengelola paket Python
 
-Instalasi
----------
+### Instalasi
+1. Clone repository:
+```bash
+git clone https://github.com/FdrAnsyah/Keamanan_web
+```
 
-1. (Opsional) Buat virtual environment dan aktifkan:
+2. Pindah ke direktori BAC_vuln:
+```bash
+cd BAC_vuln
+```
 
+3. (Opsional) Buat virtual environment dan aktifkan:
 ```bash
 python -m venv venv
-source venv/bin/activate
+source venv/bin/activate  # Di Linux/Mac
+# atau
+venv\Scripts\activate     # Di Windows
 ```
 
-2. Install dependensi yang diperlukan:
-
+4. Install dependensi yang diperlukan:
 ```bash
-pip install Flask sqlite-minutils
+pip install Flask
 ```
 
-Menjalankan aplikasi
---------------------
-
+### Menjalankan aplikasi
 Jalankan aplikasi dengan perintah berikut dari direktori proyek:
-
 ```bash
 python app.py
 ```
 
-Akses aplikasi melalui web browser di `http://127.0.0.1:5000` (default Flask).
+Akses aplikasi melalui web browser di `http://127.0.0.1:5000`.
 
-Catatan Database
-----------------
+## Opsi 2: Run menggunakan Docker
+### Prasyarat
+- Docker dan Docker Compose telah terinstall
 
-- Berkas database SQLite `db.sqlite3` sudah ada di repositori. Jika ingin memulai dengan database kosong, cukup hapus atau pindahkan berkas tersebut, kemudian jalankan aplikasi — aplikasi akan membuat DB baru bila diperlukan.
-- Untuk manipulasi cepat DB dari command line, paket `sqlite-minutils` sudah direkomendasikan di atas.
+### Instalasi
+1. Clone repository:
+```bash
+git clone https://github.com/FdrAnsyah/Keamanan_web
+```
 
-Struktur Proyek (ringkasan)
---------------------------
+2. Pindah ke direktori BAC_vuln:
+```bash
+cd BAC_vuln
+```
 
-- `app.py` — titik masuk aplikasi Flask.
-- `db.sqlite3` — berkas database SQLite.
-- `templates/` — folder berisi template HTML seperti `index.html`, `login.html`, `admin_dashboard.html`, dsb.
+3. Buat file `Dockerfile`:
+```Dockerfile
+FROM python:3.11-slim
 
-Keamanan & Catatan Penting
---------------------------
+WORKDIR /app
 
-- Repositori ini bisa digunakan untuk latihan; jangan gunakan data sensitif nyata.
-- Periksa konfigurasi Flask (mis. `SECRET_KEY`) jika Anda mengubah aplikasi untuk lingkungan produksi.
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-Kontribusi
-----------
+COPY . .
 
-Jika Anda ingin berkontribusi, buka issue atau kirimkan pull request. Sertakan deskripsi perubahan dan alasan perbaikannya.
+EXPOSE 5000
 
-Lisensi
--------
+CMD ["python", "app.py"]
+```
 
-Periksa pemilik repositori untuk informasi lisensi. Jika tidak ada, tanyakan pada pemilik proyek sebelum menggunakan ulang kode untuk tujuan komersial.
+4. Buat file `docker-compose.yml`:
+```yaml
+version: '3.8'
+services:
+  flask-app:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      - FLASK_ENV=development
+```
 
-Kontak
--------
+5. Buat file `requirements.txt`:
+```
+Flask==2.3.3
+```
 
-Untuk pertanyaan atau laporan bug, silakan buat issue di repository.
+6. Jalankan aplikasi menggunakan Docker container:
+```bash
+docker-compose up --build
+```
+
+Akses aplikasi melalui web browser di `http://127.0.0.1:5000`.
+
+## Default Credentials
+Aplikasi ini memiliki akun user yang sudah dibuat sebelumnya:
+
+- Username: alice, Password: alicepass (Regular user)
+- Username: bob, Password: bobpass (Regular user)
+- Username: carol, Password: carolpass (Admin user)
+
+## Lab Instructions
+Gunakan aplikasi ini untuk belajar mengidentifikasi dan eksploitasi kerentanan web umum:
+
+- **IDOR (Insecure Direct Object Reference)** - Bisa mengakses profil dan billing user lain dengan mengganti parameter user_id/bill_id
+- **Privilege Escalation** - Dapatkan akses admin dengan menggunakan fitur "become_admin" di halaman admin
+- **Parameter Tampering** - Ubah nilai parameter untuk mengakses konten yang seharusnya tidak dapat diakses
+- **Forced Browsing** - Akses halaman yang seharusnya hanya untuk admin tanpa otorisasi yang sesuai
+- Gunakan tools seperti SQLMap, Burp Suite, atau OWASP ZAP untuk latihan pengujian penetrasi
