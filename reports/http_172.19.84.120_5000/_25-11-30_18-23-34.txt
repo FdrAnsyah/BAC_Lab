@@ -1,0 +1,9 @@
+# Dirsearch started Sun Nov 30 18:25:12 2025 as: /usr/lib/python3/dist-packages/dirsearch/dirsearch.py -u http://172.19.84.120:5000
+
+302   199B   http://172.19.84.120:5000/admin    -> REDIRECTS TO: /login
+302   189B   http://172.19.84.120:5000/billing    -> REDIRECTS TO: /
+400   167B   http://172.19.84.120:5000/console
+200     1KB  http://172.19.84.120:5000/login
+302   189B   http://172.19.84.120:5000/logout    -> REDIRECTS TO: /
+302   189B   http://172.19.84.120:5000/profile    -> REDIRECTS TO: /
+302   199B   http://172.19.84.120:5000/users    -> REDIRECTS TO: /login
