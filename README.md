@@ -100,9 +100,9 @@ Akses aplikasi melalui web browser di `http://127.0.0.1:5000`.
 ## Default Credentials
 Aplikasi ini memiliki akun user yang sudah dibuat sebelumnya:
 
-- Username: alice, Password: alicepass (Regular user)
-- Username: bob, Password: bobpass (Regular user)
-- Username: carol, Password: carolpass (Admin user)
+- Username: alice, Password: alicepass (Admin user)
+- Username: bob, Password: bobpass (Admin user)
+- Username: carol, Password: carolpass (Regular user)
 
 ## Lab Instructions
 Gunakan aplikasi ini untuk belajar mengidentifikasi dan eksploitasi kerentanan web umum:
